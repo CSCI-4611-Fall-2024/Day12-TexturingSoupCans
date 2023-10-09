@@ -74,37 +74,13 @@ export class ExampleApp extends gfx.GfxApp
     {
         const mesh: gfx.Mesh3 = new gfx.Mesh3();
         const vertices: gfx.Vector3[] = [];
-        const normals: gfx.Vector3[] = [];
         const indices: number[] = [];
 
-        const angleIncrement = (Math.PI * 2) / numSegments;
+        // TODO: Fill in the vertices and indices arrays
 
-        // Loop around the barrel of the cylinder
-        for(let i=0; i <= numSegments; i++)
-        {
-            // Compute the angle around the cylinder
-            const angle = i * angleIncrement;
-
-            // Create two vertices that make up each column
-            vertices.push(new gfx.Vector3(Math.cos(angle), height/2, Math.sin(angle)));
-            vertices.push(new gfx.Vector3(Math.cos(angle), -height/2, Math.sin(angle)));
-        
-            // Add the normals for each column
-            normals.push(new gfx.Vector3(Math.cos(angle), 0, Math.sin(angle)));
-            normals.push(new gfx.Vector3(Math.cos(angle), 0, Math.sin(angle)));
-        }
-
-        // Create the cylinder barrel triangles
-        for(let i=0; i < numSegments; i++)
-        {
-            indices.push(i*2, i*2+2, i*2+1);
-            indices.push(i*2+1, i*2+2, i*2+3);
-        }
 
         mesh.setVertices(vertices);
-        mesh.setNormals(normals);
         mesh.setIndices(indices);
-        mesh.createDefaultVertexColors();
         return mesh;
     }
 }
