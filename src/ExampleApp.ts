@@ -22,7 +22,7 @@ export class ExampleApp extends gfx.GfxApp
         // initialize the base class gfx.GfxApp
         super();
 
-        this.wireframe = false;
+        this.wireframe = true;
         this.gui = new GUI({ width: 300, closed: false });
         this.gui.add(this, 'wireframe')
             .onChange((value) => {
