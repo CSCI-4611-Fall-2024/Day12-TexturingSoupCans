@@ -60,7 +60,7 @@ export class ExampleApp extends gfx.GfxApp
         const axes = gfx.Geometry3Factory.createAxes(4);
         this.scene.add(axes);
 
-        this.cylinder = this.createCylinderMesh(20, 3);
+        this.cylinder = this.createCylinderMesh();
         this.scene.add(this.cylinder);
     }
 
@@ -70,7 +70,7 @@ export class ExampleApp extends gfx.GfxApp
         this.cameraControls.update(deltaTime);
     }
 
-    private createCylinderMesh(numSegments: number, height: number): gfx.Mesh3
+    private createCylinderMesh(): gfx.Mesh3
     {
         const mesh: gfx.Mesh3 = new gfx.Mesh3();
         const vertices: gfx.Vector3[] = [];
