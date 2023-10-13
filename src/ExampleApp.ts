@@ -10,6 +10,7 @@ import { GUI, GUIController } from 'dat.gui'
 export class ExampleApp extends gfx.GfxApp {
     private cameraControls: gfx.OrbitControls;
     private cylinder: gfx.Mesh3;
+    private texture: gfx.Texture;
 
     private gui: GUI;
     public wireframe: boolean;
@@ -20,6 +21,9 @@ export class ExampleApp extends gfx.GfxApp {
         // initialize the base class gfx.GfxApp
         super();
 
+        // Load the texture
+        this.texture = new gfx.Texture('./campbells.png');
+
         this.wireframe = true;
         this.gui = new GUI({ width: 300, closed: false });
         this.gui.add(this, 'wireframe')
@@ -28,7 +32,11 @@ export class ExampleApp extends gfx.GfxApp {
                 if (this.wireframe) {
                     this.cylinder.material = new gfx.WireframeMaterial();
                 } else {
-                    this.cylinder.material = new gfx.PhongMaterial();
+                    let phongMat = new gfx.PhongMaterial();
+                    // TODO: Uncomment to see the texture once UV coordinates
+                    // are created
+                    // phongMat.texture = this.texture;
+                    this.cylinder.material = phongMat;
                 }
             });
         this.cameraControls = new gfx.OrbitControls(this.camera);
@@ -50,7 +58,7 @@ export class ExampleApp extends gfx.GfxApp {
 
         // Create a directional light
         const directionalLight = new gfx.DirectionalLight(new gfx.Color(0.5, 0.5, 0.5));
-        directionalLight.position.set(-2, 1, 0)
+        directionalLight.position.set(0, 1, 2)
         this.scene.add(directionalLight);
 
         // Add an axes display to the scene
@@ -58,6 +66,7 @@ export class ExampleApp extends gfx.GfxApp {
         this.scene.add(axes);
 
         this.cylinder = this.createCylinderMesh();
+        this.cylinder.material = new gfx.WireframeMaterial(); // default to wireframe
         this.scene.add(this.cylinder);
     }
 
@@ -70,28 +79,29 @@ export class ExampleApp extends gfx.GfxApp {
     {
         const mesh: gfx.Mesh3 = new gfx.Mesh3();
         const vertices: gfx.Vector3[] = [];
+        const normals: gfx.Vector3[] = [];
         const indices: number[] = [];
         // TODO: add a 'uvs' array for texture coordinates
 
         // example 1: two triangles
-        // vertices.push(new gfx.Vector3(-1, -1, 0)); // 0
-        // vertices.push(new gfx.Vector3(-1, 1, 0)); // 1
-        // vertices.push(new gfx.Vector3(1, -1, 0)); // 2
-        // vertices.push(new gfx.Vector3(1, 1, 0)); // 3
+        vertices.push(new gfx.Vector3(-1, -1, 0)); // 0
+        vertices.push(new gfx.Vector3(-1, 1, 0)); // 1
+        vertices.push(new gfx.Vector3(1, -1, 0)); // 2
+        vertices.push(new gfx.Vector3(1, 1, 0)); // 3
 
-        // normals.push(new gfx.Vector3(1, 0, 0)); // 0
-        // normals.push(new gfx.Vector3(1, 0, 0)); // 1
-        // normals.push(new gfx.Vector3(1, 0, 0)); // 2
-        // normals.push(new gfx.Vector3(1, 0, 0)); // 3
+        normals.push(new gfx.Vector3(0, 0, 1)); // 0
+        normals.push(new gfx.Vector3(0, 0, 1)); // 1
+        normals.push(new gfx.Vector3(0, 0, 1)); // 2
+        normals.push(new gfx.Vector3(0, 0, 1)); // 3
 
         // TODO: push texture coordinates to the 'uvs' array
 
-        // // triangle 1
-        // indices.push(0, 3, 1);
-        // // triangle 2
-        // indices.push(0, 2, 3);
+        // triangle 1
+        indices.push(0, 3, 1);
+        // triangle 2
+        indices.push(0, 2, 3);
 
-        // // example 2: bars
+        // example 2: bars
         // const nBars = 10;
         // for (let i=0; i<=nBars; i++) {
         //     // a goes 0..1 across the width
@@ -102,10 +112,10 @@ export class ExampleApp extends gfx.GfxApp {
         //     const x = xStart + a * xRange;
         //     vertices.push(new gfx.Vector3(x, -1, 0));
         //     vertices.push(new gfx.Vector3(x, 1, 0));
-        //     normals.push(new gfx.Vector3(1, 0, 0));
-        //     normals.push(new gfx.Vector3(1, 0, 0));
-        //
-        //     TODO: push texture coordinates to the 'uvs' array
+        //     normals.push(new gfx.Vector3(0, 0, 1));
+        //     normals.push(new gfx.Vector3(0, 0, 1));
+        
+        //     // TODO: push texture coordinates to the 'uvs' array
         // }
 
         // for (let i=0; i<nBars; i++) {
@@ -115,22 +125,23 @@ export class ExampleApp extends gfx.GfxApp {
         //     indices.push(offset + 0, offset + 2, offset + 3);
         // }
 
-        // // example 3: cylinder barrel
+        // example 3: cylinder barrel
         // const nSlices = 50; // number of pie slices in the cylinder
+        // const height = 3;
         // for (let i=0; i<=nSlices; i++) {
         //     // a goes 0..1 around the circle
         //     const a = i / nSlices;
-        //     const angle = a * 2 * Math.PI;
+        //     const angle = a * 2 * Math.PI + Math.PI / 2; // + pi/2 so label is facing forward
         //     const x = Math.cos(angle);
         //     const z = Math.sin(-angle);
     
-        //     vertices.push(new gfx.Vector3(x, -1, z));
+        //     vertices.push(new gfx.Vector3(x, -height / 2, z));
         //     normals.push(new gfx.Vector3(x, 0, z));
     
-        //     vertices.push(new gfx.Vector3(x, 1, z));
+        //     vertices.push(new gfx.Vector3(x, height / 2, z));
         //     normals.push(new gfx.Vector3(x, 0, z));
 
-        //     TODO: push texture coordinates to the 'uvs' array
+        //     // TODO: push texture coordinates to the 'uvs' array
         // }
     
         // for (let i=0; i<nSlices; i++) {
@@ -142,6 +153,7 @@ export class ExampleApp extends gfx.GfxApp {
 
         mesh.setVertices(vertices);
         mesh.setIndices(indices);
+        mesh.setNormals(normals);
         mesh.createDefaultVertexColors();
 
         // TODO: set texture coordinates on mesh
